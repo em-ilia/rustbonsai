@@ -1,7 +1,4 @@
-enum Tree {
-    Branch(Branch),
-    Leaf(Leaf)
-}
+use rand::{thread_rng, Rng};
 
 struct Tree {
     x: f64,

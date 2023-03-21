@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 tui = { package = "ratatui" }
 crossterm = "0.25"
+rand = { version = "0.8.5", features=["std"]}
