@@ -48,3 +48,37 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
         }
     }
 }
+
+fn left_shoot_growth(t: &Tree) -> (i16, i16) {
+    let mut x: i16 = 0;
+    let mut y: i16 = 0;
+    match thread_rng().gen_range(1..=10) {
+        1|2 => y=-1,
+        9|10 => y=1,
+        _ => ()
+    }
+    match thread_rng().gen_range(1..=10) {
+        1|2 => x = -2,
+        3..=6 => x = -1,
+        7..=9 => x = 0,
+        _ => x = 1
+    }
+    return (x,y)
+}
+
+fn right_shoot_growth(t: &Tree) -> (i16, i16) {
+    let mut x: i16 = 0;
+    let mut y: i16 = 0;
+    match thread_rng().gen_range(1..=10) {
+        1|2 => y=-1,
+        9|10 => y=1,
+        _ => ()
+    }
+    match thread_rng().gen_range(1..=10) {
+        1|2 => x = 2,
+        3..=6 => x = 1,
+        7..=9 => x = 0,
+        _ => x = -1
+    }
+    return (x,y)
+}
