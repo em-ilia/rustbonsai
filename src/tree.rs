@@ -3,18 +3,29 @@ enum Tree {
     Leaf(Leaf)
 }
 
-pub struct Trunk {
-    x_range: f64,
-    y_range: f64,
-    child: Tree
+struct Tree {
+    x: f64,
+    y: f64,
+    age: i16,
+    state: TreeState,
+    knots: Vec<Tree>
 }
-impl Trunk {
-    fn new(radius_x: f64, radius_y: f64) -> Self {
-        Trunk {
-            x_range: radius_x,
-            y_range: radius_y,
-            child: Tree::Leaf(Leaf { x: 0.0, y: 0.0 })
-            }
+enum TreeState {
+    Trunk,
+    BranchLeft,
+    BranchRight,
+    Leaves,
+    Dead
+}
+impl Tree {
+    fn new() -> Self {
+        Tree {
+            x: 0.0,
+            y: 0.0,
+            age: 0,
+            state: TreeState::Trunk,
+            knots: Vec::new()
+        }
     }
 }
 
