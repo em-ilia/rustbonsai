@@ -1,3 +1,4 @@
+mod tree;
 use std::{
     io,
     time::{Duration, Instant}
@@ -17,36 +18,19 @@ use tui::{
     },
     Frame, Terminal};
 
-struct Trunk {
-    x_range: f64,
-    y_range: f64,
-    child: Tree
-}
-enum Tree {
-    Branch(Branch),
-    Leaf(Leaf)
-}
-struct Branch {
-    x: f64,
-    y: f64,
-    dx: f64,
-    dy: f64,
-    child: Box<Tree>
 
-}
-struct Leaf {
-    x: f64,
-    y: f64
+fn main() -> () {
+    println!("Branch creation debugging!")
 }
 
-fn main() -> Result<(), io::Error> {
+fn _main() -> Result<(), io::Error> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let res = run_app(&mut terminal);
+    let _res = run_app(&mut terminal);
 
     // restore terminal
     disable_raw_mode()?;
