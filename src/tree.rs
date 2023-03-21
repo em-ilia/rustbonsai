@@ -26,15 +26,25 @@ impl Tree {
     }
 }
 
-struct Branch {
-    x: f64,
-    y: f64,
-    dx: f64,
-    m: i8, // We're only going to permit a few slopes
-    child: Box<Tree>
-}
-
-struct Leaf {
-    x: f64,
-    y: f64
+/// trunk_growth takes a tree in
+/// a trunk state and returns:
+/// * a dx integer, the amount to grow 
+/// UNTESTED
+fn trunk_growth(t: &Tree) -> (i16, i16) {
+    // New trunk:
+    match t.age {
+        // New trunks
+        0..=3 => return (thread_rng().gen_range(0..=2), 0),
+        4..=15 => {
+            let x = thread_rng().gen_range(-1..=2);
+            let y = if (t.age % 3 == 0) {1} else {0};
+            return (x,y);
+        }
+        _ => {
+            let x = thread_rng().gen_range(-1..=2);
+            let y = if thread_rng().gen_ratio(1, 5)
+                            {1} else {0};
+            return (x,y);
+        }
+    }
 }
