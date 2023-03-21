@@ -17,6 +17,28 @@ use tui::{
     },
     Frame, Terminal};
 
+struct Trunk {
+    x_range: f64,
+    y_range: f64,
+    child: Tree
+}
+enum Tree {
+    Branch(Branch),
+    Leaf(Leaf)
+}
+struct Branch {
+    x: f64,
+    y: f64,
+    dx: f64,
+    dy: f64,
+    child: Box<Tree>
+
+}
+struct Leaf {
+    x: f64,
+    y: f64
+}
+
 fn main() -> Result<(), io::Error> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
