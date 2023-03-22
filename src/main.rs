@@ -20,7 +20,12 @@ use tui::{
 
 
 fn main() -> () {
-    println!("Branch creation debugging!")
+    println!("Branch creation debugging!");
+    let mut t = tree::Tree::default();
+    for i in 1..=40 {
+        println!("{:?}", t.observe());
+        t.grow();
+    }
 }
 
 fn _main() -> Result<(), io::Error> {
