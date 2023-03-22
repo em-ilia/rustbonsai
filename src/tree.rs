@@ -66,6 +66,7 @@ fn left_shoot_growth(t: &Tree) -> (i16, i16) {
     return (x,y)
 }
 
+/// Same as trunk_growth
 fn right_shoot_growth(t: &Tree) -> (i16, i16) {
     let mut x: i16 = 0;
     let mut y: i16 = 0;
@@ -81,4 +82,41 @@ fn right_shoot_growth(t: &Tree) -> (i16, i16) {
         _ => x = -1
     }
     return (x,y)
+}
+
+const TRUNK_STRINGS: [&str;4] = ["/~","\\|","/|\\","|/"];
+const SHOOT_STRINGS: [&str;6] = ["\\","\\_","\\|","/|","/","_/"];
+fn choose_string(t: &Tree) -> &str {
+    match t.state {
+        TreeState::Trunk => {
+            let d = trunk_growth(t);
+            if (d.1 == 0) {return TRUNK_STRINGS[0]};
+            match d.0 {
+                n if n < 0 => return TRUNK_STRINGS[1],
+                0 => return TRUNK_STRINGS[2],
+                _ => return TRUNK_STRINGS[3]
+            }
+        },
+        TreeState::BranchLeft => {
+            let d = left_shoot_growth(t);
+            if (d.1 > 0) {return SHOOT_STRINGS[0]}
+            else if d.1 == 0 {return SHOOT_STRINGS[1]};
+            match d.0 {
+                n if n < 0 => return SHOOT_STRINGS[2],
+                0 => SHOOT_STRINGS[3],
+                _ => SHOOT_STRINGS[4]
+            }
+        },
+        TreeState::BranchRight => {
+            let d = right_shoot_growth(t);
+            if (d.1 > 0) {return SHOOT_STRINGS[4]}
+            else if d.1 == 0 {return SHOOT_STRINGS[5]};
+            match d.0 {
+                n if n < 0 => return SHOOT_STRINGS[2],
+                0 => SHOOT_STRINGS[3],
+                _ => SHOOT_STRINGS[4]
+            }
+        },
+        _ => {return "shrimp"}
+    }
 }
