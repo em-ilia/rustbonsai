@@ -6,11 +6,11 @@ pub struct Tree {
     x: f64,
     y: f64,
     age: i16,
-    state: TreeState,
+    pub state: TreeState,
     knots: Vec<Tree>
 }
-#[derive(PartialEq)]
-enum TreeState {
+#[derive(PartialEq, Debug)]
+pub enum TreeState {
     Trunk,
     BranchLeft,
     BranchRight,
