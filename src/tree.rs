@@ -1,12 +1,15 @@
 use rand::{thread_rng, Rng};
+use tui::widgets::canvas::Context;
 
-struct Tree {
+const initial_life: i16 = 32;
+pub struct Tree {
     x: f64,
     y: f64,
     age: i16,
     state: TreeState,
     knots: Vec<Tree>
 }
+#[derive(PartialEq)]
 enum TreeState {
     Trunk,
     BranchLeft,
@@ -15,7 +18,7 @@ enum TreeState {
     Dead
 }
 impl Tree {
-    fn new() -> Self {
+    pub fn default() -> Self {
         Tree {
             x: 0.0,
             y: 0.0,
@@ -23,6 +26,61 @@ impl Tree {
             state: TreeState::Trunk,
             knots: Vec::new()
         }
+    }
+    fn new_at(&self) -> Self {
+        Tree {
+            x: self.x,
+            y: self.y,
+            age: self.age,
+            state: TreeState::Trunk, // Should have RNG here
+            knots: Vec::new()
+        }
+    }
+
+    pub fn grow(&mut self) {
+        self.age += 1;
+
+        // Handle old and dead trees
+        if self.age > 100 || self.state == TreeState::Dead {
+            self.state = TreeState::Dead;
+            return ();
+        };
+
+        let d = match self.state {
+            TreeState::Trunk => trunk_growth(self),
+            TreeState::BranchLeft => left_shoot_growth(self),
+            TreeState::BranchRight => right_shoot_growth(self),
+            TreeState::Dead => (0,0),
+            TreeState::Leaves => (0,0) // Not sure what to do here
+        };
+        self.x += d.0 as f64;
+        self.y += d.1 as f64;
+
+        // State transitions
+        if self.state == TreeState::Trunk && thread_rng().gen_ratio(1, 15) {
+            self.state = if thread_rng().gen_bool(0.5) {TreeState::BranchLeft}
+            else {TreeState::BranchRight};
+        }
+
+        // Occasionally create a knot
+        if thread_rng().gen_ratio(1, 30) {
+            self.knots.push(self.new_at());
+        }
+
+        // Grow all children
+        for tree in &mut self.knots {
+            tree.grow()
+        }
+    }
+
+    pub fn observe(&self) -> Vec<(f64, f64, &str)> {
+        let mut res: Vec<(f64, f64, &str)> = Vec::new();
+        res.push((self.x, self.y, choose_string(self)));
+        for tree in &self.knots {
+            res.append(&mut tree.observe());
+        }
+
+        return res;
     }
 }
 
@@ -49,6 +107,7 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
     }
 }
 
+/// Same as trunk_growth
 fn left_shoot_growth(t: &Tree) -> (i16, i16) {
     let mut x: i16 = 0;
     let mut y: i16 = 0;
