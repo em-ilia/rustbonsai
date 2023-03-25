@@ -1,5 +1,4 @@
 use rand::{thread_rng, Rng};
-use tui::widgets::canvas::Context;
 
 const initial_life: i16 = 32;
 pub struct Tree {
