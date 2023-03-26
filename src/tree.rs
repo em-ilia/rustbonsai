@@ -6,7 +6,9 @@ pub struct Tree {
     y: f64,
     age: i16,
     pub state: TreeState,
-    knots: Vec<Tree>
+    knots: Vec<Tree>,
+    xmax: f64,
+    ymax: f64
 }
 #[derive(PartialEq, Debug)]
 pub enum TreeState {
@@ -17,13 +19,15 @@ pub enum TreeState {
     Dead
 }
 impl Tree {
-    pub fn default() -> Self {
+    pub fn new(xmax: f64, ymax: f64) -> Self {
         Tree {
             x: 0.0,
             y: 0.0,
             age: 0,
             state: TreeState::Trunk,
-            knots: Vec::new()
+            knots: Vec::new(),
+            xmax,
+            ymax
         }
     }
     fn new_at(&self) -> Self {
@@ -32,7 +36,9 @@ impl Tree {
             y: self.y,
             age: self.age,
             state: TreeState::Trunk, // Should have RNG here
-            knots: Vec::new()
+            knots: Vec::new(),
+            xmax: self.xmax,
+            ymax: self.ymax
         }
     }
 

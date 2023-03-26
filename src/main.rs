@@ -51,8 +51,9 @@ impl Screen {
 }
 
 fn ui_loop() -> Result<()> {
-    let mut t = tree::Tree::default();
     let scr = Screen::new();
+    let mut t = tree::Tree::new(scr.x_max.into(), scr.y_max.into()); // We should really stop using
+                                                                     // floats now.
 
     for _ in 1..=60 {
         t.grow();
