@@ -14,15 +14,6 @@ use crossterm::{
     style::Print
 };
 
-fn _main() -> () {
-    println!("Branch creation debugging!");
-    let mut t = tree::Tree::default();
-    for _ in 1..=40 {
-        println!("{:?}", t.observe());
-        t.grow();
-    }
-}
-
 fn main() -> Result<()> {
     // Setup
     execute!(stdout(), EnterAlternateScreen)?;
