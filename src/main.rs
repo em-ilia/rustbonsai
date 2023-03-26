@@ -30,15 +30,12 @@ fn main() -> Result<()> {
     execute!(stdout(), Hide)?;
     // Setup Complete
 
-    let (x,y) = size()?;
-    execute!(stdout(), MoveTo(x/2+20,y/2), Print("Shrimp"));
+    ui_loop()?;
     thread::sleep(Duration::from_secs(1));
-
-    ui_loop();
 
     // Clean up
     disable_raw_mode()?;
-    execute!(stdout(), LeaveAlternateScreen, Show);
+    execute!(stdout(), LeaveAlternateScreen, Show)?;
 
     Ok(())
 }
