@@ -1,12 +1,11 @@
 mod tree;
 use std::{
-    io::{self, stdout, Write},
-    time::{Duration, Instant},
+    io::{stdout, Write},
+    time::Duration,
     thread
 };
 use crossterm::{
     execute,
-    event,
     queue,
     Result,
     terminal::{EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode, size},
