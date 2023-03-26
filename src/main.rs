@@ -32,15 +32,13 @@ fn main() -> Result<()> {
 }
 
 struct Screen {
-    x_max: u16,
-    y_max: u16,
-    x0: u16,
-    y0: u16
+    pub x_max: u16,
+    pub y_max: u16
 }
 impl Screen {
     pub fn new() -> Self {
         let (x,y) = size().unwrap();
-        Screen { x_max: x, y_max: y, x0: 60, y0: 20 }
+        Screen { x_max: x, y_max: y }
     }
     pub fn draw_str(&self, x: i16, y: i16, s: &str) {
         let x_adj = x + self.x_max as i16/2 ;
