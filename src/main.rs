@@ -23,7 +23,6 @@ fn main() -> Result<()> {
     // Setup Complete
 
     ui_loop()?;
-    thread::sleep(Duration::from_secs(1));
 
     // Clean up
     disable_raw_mode()?;
@@ -74,7 +73,7 @@ fn ui_loop() -> Result<()> {
             stdout().flush()?;
         }
     }
-    thread::sleep(Duration::from_secs(1));
+    thread::sleep(Duration::from_secs(2));
 
     Ok(())
 }
