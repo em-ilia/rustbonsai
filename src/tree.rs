@@ -5,10 +5,10 @@ use rand::{thread_rng, Rng};
 const EDGE_PENALTY: (i16, i16, i16, i16) = (-2,3,4,-4); // How soon to fear the edge
 const KNOT_RATIO: u32 = 30; // Decrease for more knots
 const KNOT_AGE: i16 = 20; // Minimum age to knot
-const TRANSITION_RATIO: u32 = 40; // Decrease for earlier sideways branching
-const TRANSITION_AGE: i16 = 10; // Minimum age to branch
-const TRANSITION_PENALTY: i16 = 30; // How much age to add when branching
-const LEAF_AGE: i16 = 60; // When we should start generating leaves
+const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
+const TRANSITION_AGE: i16 = 20; // Minimum age to branch
+const TRANSITION_PENALTY: i16 = 10; // How much age to add when branching
+const LEAF_AGE: i16 = 50; // When we should start generating leaves
 const DEATH_AGE: i16 = 80; // When to die :(
 
 
@@ -140,8 +140,12 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
     match t.age {
         // New trunks
         0..=3 => return (thread_rng().gen_range(0..=2), 0),
-        4..=15 => {
-            let x = thread_rng().gen_range(-1..=1);
+        4..=TRANSITION_AGE => {
+            let x = match thread_rng().gen_range(1..=10) {
+                1 | 2 => -1,
+                3 | 4 => 1,
+                _ => 0
+            };
             let y = if t.age % 2 == 0 { 1 } else { 0 };
             return (x, y);
         }
