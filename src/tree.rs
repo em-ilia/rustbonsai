@@ -42,6 +42,14 @@ impl Tree {
         }
     }
 
+    /// Output is top, bottom, left, right
+    fn check_boundary(&self) -> (i16, i16, i16, i16) {
+        return (self.ymax - self.y,
+                self.y,
+                i16::abs(self.x + self.xmax),
+                i16::abs(self.xmax - self.x))
+    }
+
     pub fn grow(&mut self) {
         self.age += 1;
 
