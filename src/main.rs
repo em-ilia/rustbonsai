@@ -59,7 +59,10 @@ fn ui_loop() -> Result<()> {
     let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16); // We should really stop using
                                                                      // floats now.
 
+    let mut override_counter: u16 = 0;
     while !t.is_dead() {
+        override_counter += 1;
+        if override_counter > 150 {return Ok(())}; // Ensure the loop is never infinite
         t.grow();
         for (x, y, s) in t.observe() {
             scr.draw_str(x as i16, y as i16, s);
