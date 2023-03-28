@@ -1,6 +1,17 @@
 use crossterm::style::{Stylize, StyledContent};
 use rand::{thread_rng, Rng};
 
+// Growth Constants
+const KNOT_RATIO: u32 = 40;
+const TRANSITION_RATIO: u32 = 40;
+const EDGE_PENALTY: (i16, i16, i16, i16) = (-2,2,4,-4);
+const TRANSITION_PENALTY: i16 = 20;
+const LEAF_AGE: i16 = 60;
+const DEATH_AGE: i16 = 80;
+const KNOT_AGE: i16 = 20;
+const TRANSITION_AGE: i16 = 10;
+
+
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
     x: i16,
@@ -55,12 +66,12 @@ impl Tree {
         self.age += 1;
 
         // Handle old and dead trees
-        if self.age > 80 || self.state == TreeState::Dead {
+        if self.age > DEATH_AGE || self.state == TreeState::Dead {
             self.state = TreeState::Dead;
             return ();
         };
-        
-        if self.age > 60 {
+
+        if self.age > LEAF_AGE {
             self.state = TreeState::Leaves;
         }
 
@@ -76,15 +87,15 @@ impl Tree {
 
         // Correct out of bounds
         let bnd = self.check_boundary();
-        if bnd.0 > -2 {self.y += -bnd.0 -1}
-        if bnd.1 < 0 {self.y += -bnd.1 +1}
-        if bnd.2 < 5 {self.x += 4}
-        if bnd.3 > -5 {self.x += -4}
+        if bnd.0 > -2 {self.y += EDGE_PENALTY.0}
+        if bnd.1 < 0 {self.y += EDGE_PENALTY.1}
+        if bnd.2 < 5 {self.x += EDGE_PENALTY.2}
+        if bnd.3 > -5 {self.x += EDGE_PENALTY.3}
 
 
         // State transitions
-        if self.state == TreeState::Trunk && self.age > 10 && thread_rng().gen_ratio(1, 25) {
-            self.age += 20;
+        if self.state == TreeState::Trunk && self.age > TRANSITION_AGE && thread_rng().gen_ratio(1, TRANSITION_RATIO) {
+            self.age += TRANSITION_PENALTY;
             self.state = if thread_rng().gen_bool(0.5) {
                 TreeState::BranchLeft
             } else {
@@ -93,7 +104,7 @@ impl Tree {
         }
 
         // Occasionally create a knot
-        if thread_rng().gen_ratio(1, 40) && self.age > 20 {
+        if thread_rng().gen_ratio(1, KNOT_RATIO) && self.age > KNOT_AGE {
             match self.state {
                 TreeState::BranchLeft => self.knots.push(self.new_at(TreeState::Trunk)),
                 TreeState::BranchRight => self.knots.push(self.new_at(TreeState::Trunk)),
