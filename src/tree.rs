@@ -1,8 +1,8 @@
-use crossterm::style::{Stylize, StyledContent};
+use crossterm::style::{StyledContent, Stylize};
 use rand::{thread_rng, Rng};
 
 // Growth Constants
-const EDGE_PENALTY: (i16, i16, i16, i16) = (-2,3,4,-4); // How soon to fear the edge
+const EDGE_PENALTY: (i16, i16, i16, i16) = (-2, 3, 4, -4); // How soon to fear the edge
 const KNOT_RATIO: u32 = 30; // Decrease for more knots
 const KNOT_AGE: i16 = 20; // Minimum age to knot
 const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
@@ -10,7 +10,6 @@ const TRANSITION_AGE: i16 = 20; // Minimum age to branch
 const TRANSITION_PENALTY: i16 = 10; // How much age to add when branching
 const LEAF_AGE: i16 = 50; // When we should start generating leaves
 const DEATH_AGE: i16 = 80; // When to die :(
-
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
@@ -56,10 +55,12 @@ impl Tree {
 
     /// Output is top, bottom, left, right
     fn check_boundary(&self) -> (i16, i16, i16, i16) {
-        return (self.y - self.ymax,
-                self.y,
-                self.x + self.xmax,
-                self.x - self.xmax)
+        return (
+            self.y - self.ymax,
+            self.y,
+            self.x + self.xmax,
+            self.x - self.xmax,
+        );
     }
 
     pub fn grow(&mut self) {
@@ -87,14 +88,24 @@ impl Tree {
 
         // Correct out of bounds
         let bnd = self.check_boundary();
-        if bnd.0 > -2 {self.y += EDGE_PENALTY.0}
-        if bnd.1 < 0 {self.y += EDGE_PENALTY.1}
-        if bnd.2 < 5 {self.x += EDGE_PENALTY.2}
-        if bnd.3 > -5 {self.x += EDGE_PENALTY.3}
-
+        if bnd.0 > -2 {
+            self.y += EDGE_PENALTY.0
+        }
+        if bnd.1 < 0 {
+            self.y += EDGE_PENALTY.1
+        }
+        if bnd.2 < 5 {
+            self.x += EDGE_PENALTY.2
+        }
+        if bnd.3 > -5 {
+            self.x += EDGE_PENALTY.3
+        }
 
         // State transitions
-        if self.state == TreeState::Trunk && self.age > TRANSITION_AGE && thread_rng().gen_ratio(1, TRANSITION_RATIO) {
+        if self.state == TreeState::Trunk
+            && self.age > TRANSITION_AGE
+            && thread_rng().gen_ratio(1, TRANSITION_RATIO)
+        {
             self.age += TRANSITION_PENALTY;
             self.state = if thread_rng().gen_bool(0.5) {
                 TreeState::BranchLeft
@@ -109,7 +120,7 @@ impl Tree {
                 TreeState::BranchLeft => self.knots.push(self.new_at(TreeState::Trunk)),
                 TreeState::BranchRight => self.knots.push(self.new_at(TreeState::Trunk)),
                 TreeState::Trunk => self.knots.push(self.new_at(TreeState::BranchRight)),
-                _ => ()
+                _ => (),
             }
         }
 
@@ -119,8 +130,7 @@ impl Tree {
         }
     }
 
-    pub fn observe(&self) -> 
-        Vec<(i16, i16, StyledContent<&str>)> {
+    pub fn observe(&self) -> Vec<(i16, i16, StyledContent<&str>)> {
         let mut res: Vec<(i16, i16, StyledContent<&str>)> = Vec::new();
         res.push((self.x, self.y, choose_string(self)));
         for tree in &self.knots {
@@ -132,11 +142,15 @@ impl Tree {
 
     /// Return true only if every tree is dead
     pub fn is_dead(&self) -> bool {
-        if self.state != TreeState::Dead {return false}
-        for tree in &self.knots {
-            if !tree.is_dead() {return false}
+        if self.state != TreeState::Dead {
+            return false;
         }
-        return true
+        for tree in &self.knots {
+            if !tree.is_dead() {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -153,7 +167,7 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
             let x = match thread_rng().gen_range(1..=10) {
                 1 | 2 => -1,
                 3 | 4 => 1,
-                _ => 0
+                _ => 0,
             };
             let y = if t.age % 2 == 0 { 1 } else { 0 };
             return (x, y);
@@ -207,10 +221,10 @@ fn leaf_growth(_t: &Tree) -> (i16, i16) {
         // Leaves should not be vertical!!
         1 => -1,
         2 => 1,
-        _ => 0
+        _ => 0,
     };
     let x: i16 = thread_rng().gen_range(-1..=1);
-    return (x,y)
+    return (x, y);
 }
 
 const TRUNK_STRINGS: [&str; 4] = ["/~", "\\|", "/|\\", "|/"];
@@ -253,7 +267,7 @@ fn choose_string(t: &Tree) -> StyledContent<&str> {
                 0 => SHOOT_STRINGS[3].grey(),
                 _ => SHOOT_STRINGS[4].grey(),
             }
-        },
+        }
         TreeState::Leaves => "&&".green(),
         _ => return "x".white(),
     }
