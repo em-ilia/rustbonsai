@@ -1,6 +1,7 @@
 mod tree;
 use crossterm::{
     cursor::{Hide, MoveTo, Show},
+    event::{self, Event, KeyCode},
     execute, queue,
     style::{Print, StyledContent},
     terminal::{
@@ -63,7 +64,13 @@ fn ui_loop() -> Result<()> {
         t.grow();
         for (x, y, s) in t.observe() {
             scr.draw_str(x as i16, y as i16, s);
-            thread::sleep(Duration::from_millis(20));
+            if crossterm::event::poll(Duration::from_millis(20))? { // Allow user termination
+                if let Event::Key(key) = event::read()? {
+                    if let KeyCode::Char('q') = key.code {
+                        return Ok(());
+                    }
+                }
+            }
             stdout().flush()?;
         }
     }
