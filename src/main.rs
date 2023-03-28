@@ -59,7 +59,7 @@ fn ui_loop() -> Result<()> {
     let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16); // We should really stop using
                                                                      // floats now.
 
-    for _ in 1..=80 {
+    while !t.is_dead() {
         t.grow();
         for (x, y, s) in t.observe() {
             scr.draw_str(x as i16, y as i16, s);

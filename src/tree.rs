@@ -129,6 +129,15 @@ impl Tree {
 
         return res;
     }
+
+    /// Return true only if every tree is dead
+    pub fn is_dead(&self) -> bool {
+        if self.state != TreeState::Dead {return false}
+        for tree in &self.knots {
+            if !tree.is_dead() {return false}
+        }
+        return true
+    }
 }
 
 /// trunk_growth takes a tree in
