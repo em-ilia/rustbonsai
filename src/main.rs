@@ -2,7 +2,7 @@ mod tree;
 use crossterm::{
     cursor::{Hide, MoveTo, Show},
     execute, queue,
-    style::Print,
+    style::{Print, StyledContent},
     terminal::{
         disable_raw_mode, enable_raw_mode, size, EnterAlternateScreen, LeaveAlternateScreen,
     },
@@ -40,7 +40,7 @@ impl Screen {
         let (x, y) = size().unwrap();
         Screen { x_max: x, y_max: y }
     }
-    pub fn draw_str(&self, x: i16, y: i16, s: &str) {
+    pub fn draw_str(&self, x: i16, y: i16, s: StyledContent<&str>) {
         let x_adj = x + self.x_max as i16 / 2;
         let y_adj = self.y_max as i16 - y;
         if x_adj as u16 > self.x_max {
@@ -59,7 +59,7 @@ fn ui_loop() -> Result<()> {
     let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16); // We should really stop using
                                                                      // floats now.
 
-    for _ in 1..=60 {
+    for _ in 1..=80 {
         t.grow();
         for (x, y, s) in t.observe() {
             scr.draw_str(x as i16, y as i16, s);
