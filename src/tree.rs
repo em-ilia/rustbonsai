@@ -9,7 +9,7 @@ const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
 const TRANSITION_AGE: i16 = 20; // Minimum age to branch
 const TRANSITION_PENALTY: i16 = 10; // How much age to add when branching
 const LEAF_AGE: i16 = 50; // When we should start generating leaves
-const DEATH_AGE: i16 = 85; // When to die :(
+const DEATH_AGE: i16 = 70; // When to die :(
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
@@ -116,14 +116,7 @@ impl Tree {
 
         // Occasionally create a knot
         if thread_rng().gen_ratio(1, KNOT_RATIO) && self.age > KNOT_AGE {
-            match self.state {
-                TreeState::BranchLeft => self.knots.push(self.new_at(TreeState::Trunk)),
-                TreeState::BranchRight => self.knots.push(self.new_at(TreeState::Trunk)),
-                TreeState::Trunk => self.knots.push(self.new_at(
-                        if thread_rng().gen_bool(0.5) {TreeState::BranchRight}
-                        else {TreeState::BranchLeft})),
-                _ => (),
-            }
+            self.force_knot();
         }
 
         // Grow all children
@@ -154,6 +147,17 @@ impl Tree {
         }
         return true;
     }
+
+    pub fn force_knot(&mut self) {
+        match self.state {
+            TreeState::BranchLeft => self.knots.push(self.new_at(TreeState::Trunk)),
+            TreeState::BranchRight => self.knots.push(self.new_at(TreeState::Trunk)),
+            TreeState::Trunk => self.knots.push(self.new_at(
+                    if thread_rng().gen_bool(0.5) {TreeState::BranchRight}
+                    else {TreeState::BranchLeft})),
+            _ => (),
+        }
+    }
 }
 
 /// trunk_growth takes a tree in
@@ -164,8 +168,8 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
     // New trunk:
     match t.age {
         // New trunks
-        0..=3 => return (thread_rng().gen_range(0..=2), 0),
-        4..=TRANSITION_AGE => {
+        0..=6 => return (thread_rng().gen_range(-1..=1), 0),
+        7..=TRANSITION_AGE => {
             let x = match thread_rng().gen_range(1..=10) {
                 1 | 2 => -1,
                 3 | 4 => 1,

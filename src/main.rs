@@ -56,8 +56,8 @@ impl Screen {
 
 fn ui_loop() -> Result<()> {
     let scr = Screen::new();
-    let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16); // We should really stop using
-                                                                     // floats now.
+    let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16);
+    t.force_knot();
 
     let mut override_counter: u16 = 0;
     while !t.is_dead() {
