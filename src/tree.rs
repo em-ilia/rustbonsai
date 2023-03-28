@@ -234,41 +234,41 @@ fn choose_string(t: &Tree) -> StyledContent<&str> {
         TreeState::Trunk => {
             let d = trunk_growth(t);
             if d.1 == 0 {
-                return TRUNK_STRINGS[0].grey();
+                return TRUNK_STRINGS[0].dark_yellow();
             };
             match d.0 {
-                n if n < 0 => return TRUNK_STRINGS[1].grey(),
-                0 => return TRUNK_STRINGS[2].grey(),
-                _ => return TRUNK_STRINGS[3].grey(),
+                n if n < 0 => return TRUNK_STRINGS[1].dark_yellow(),
+                0 => return TRUNK_STRINGS[2].dark_yellow(),
+                _ => return TRUNK_STRINGS[3].dark_yellow(),
             }
         }
         TreeState::BranchLeft => {
             let d = left_shoot_growth(t);
             if d.1 > 0 {
-                return SHOOT_STRINGS[0].grey();
+                return SHOOT_STRINGS[0].dark_yellow();
             } else if d.1 == 0 {
-                return SHOOT_STRINGS[1].grey();
+                return SHOOT_STRINGS[1].dark_yellow();
             };
             match d.0 {
-                n if n < 0 => return SHOOT_STRINGS[2].grey(),
-                0 => SHOOT_STRINGS[3].grey(),
-                _ => SHOOT_STRINGS[4].grey(),
+                n if n < 0 => return SHOOT_STRINGS[2].dark_yellow(),
+                0 => SHOOT_STRINGS[3].dark_yellow(),
+                _ => SHOOT_STRINGS[4].dark_yellow(),
             }
         }
         TreeState::BranchRight => {
             let d = right_shoot_growth(t);
             if d.1 > 0 {
-                return SHOOT_STRINGS[4].grey();
+                return SHOOT_STRINGS[4].dark_yellow();
             } else if d.1 == 0 {
-                return SHOOT_STRINGS[5].grey();
+                return SHOOT_STRINGS[5].dark_yellow();
             };
             match d.0 {
-                n if n < 0 => return SHOOT_STRINGS[2].grey(),
-                0 => SHOOT_STRINGS[3].grey(),
-                _ => SHOOT_STRINGS[4].grey(),
+                n if n < 0 => return SHOOT_STRINGS[2].dark_yellow(),
+                0 => SHOOT_STRINGS[3].dark_yellow(),
+                _ => SHOOT_STRINGS[4].dark_yellow(),
             }
         }
         TreeState::Leaves => "&&".green(),
-        _ => return "x".white(),
+        _ => return "&".yellow(),
     }
 }
