@@ -2,13 +2,13 @@ use rand::{thread_rng, Rng};
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
-    x: f64,
-    y: f64,
+    x: i16,
+    y: i16,
     age: i16,
     pub state: TreeState,
     knots: Vec<Tree>,
-    xmax: f64,
-    ymax: f64,
+    xmax: i16,
+    ymax: i16,
 }
 #[derive(PartialEq, Debug)]
 pub enum TreeState {
@@ -19,10 +19,10 @@ pub enum TreeState {
     Dead,
 }
 impl Tree {
-    pub fn new(xmax: f64, ymax: f64) -> Self {
+    pub fn new(xmax: i16, ymax: i16) -> Self {
         Tree {
-            x: 0.0,
-            y: 0.0,
+            x: 0,
+            y: 0,
             age: 0,
             state: TreeState::Trunk,
             knots: Vec::new(),
@@ -58,8 +58,8 @@ impl Tree {
             TreeState::Dead => (0, 0),
             TreeState::Leaves => (0, 0), // Not sure what to do here
         };
-        self.x += d.0 as f64;
-        self.y += d.1 as f64;
+        self.x += d.0;
+        self.y += d.1;
 
         // State transitions
         if self.state == TreeState::Trunk && thread_rng().gen_ratio(1, 15) {
@@ -81,8 +81,8 @@ impl Tree {
         }
     }
 
-    pub fn observe(&self) -> Vec<(f64, f64, &str)> {
-        let mut res: Vec<(f64, f64, &str)> = Vec::new();
+    pub fn observe(&self) -> Vec<(i16, i16, &str)> {
+        let mut res: Vec<(i16, i16, &str)> = Vec::new();
         res.push((self.x, self.y, choose_string(self)));
         for tree in &self.knots {
             res.append(&mut tree.observe());
