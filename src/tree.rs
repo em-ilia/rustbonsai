@@ -9,7 +9,7 @@ const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
 const TRANSITION_AGE: i16 = 20; // Minimum age to branch
 const TRANSITION_PENALTY: i16 = 10; // How much age to add when branching
 const LEAF_AGE: i16 = 50; // When we should start generating leaves
-const DEATH_AGE: i16 = 90; // When to die :(
+const DEATH_AGE: i16 = 85; // When to die :(
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
@@ -119,7 +119,9 @@ impl Tree {
             match self.state {
                 TreeState::BranchLeft => self.knots.push(self.new_at(TreeState::Trunk)),
                 TreeState::BranchRight => self.knots.push(self.new_at(TreeState::Trunk)),
-                TreeState::Trunk => self.knots.push(self.new_at(TreeState::BranchRight)),
+                TreeState::Trunk => self.knots.push(self.new_at(
+                        if thread_rng().gen_bool(0.5) {TreeState::BranchRight}
+                        else {TreeState::BranchLeft})),
                 _ => (),
             }
         }
