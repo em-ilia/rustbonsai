@@ -1,6 +1,6 @@
 use rand::{thread_rng, Rng};
 
-const initial_life: i16 = 32;
+// const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
     x: f64,
     y: f64,
@@ -103,7 +103,7 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
         0..=3 => return (thread_rng().gen_range(0..=2), 0),
         4..=15 => {
             let x = thread_rng().gen_range(-1..=2);
-            let y = if (t.age % 3 == 0) { 1 } else { 0 };
+            let y = if t.age % 3 == 0 { 1 } else { 0 };
             return (x, y);
         }
         _ => {
@@ -115,8 +115,8 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
 }
 
 /// Same as trunk_growth
-fn left_shoot_growth(t: &Tree) -> (i16, i16) {
-    let mut x: i16 = 0;
+fn left_shoot_growth(_t: &Tree) -> (i16, i16) {
+    let x: i16;
     let mut y: i16 = 0;
     match thread_rng().gen_range(1..=10) {
         1 | 2 => y = -1,
@@ -133,8 +133,8 @@ fn left_shoot_growth(t: &Tree) -> (i16, i16) {
 }
 
 /// Same as trunk_growth
-fn right_shoot_growth(t: &Tree) -> (i16, i16) {
-    let mut x: i16 = 0;
+fn right_shoot_growth(_t: &Tree) -> (i16, i16) {
+    let x: i16;
     let mut y: i16 = 0;
     match thread_rng().gen_range(1..=10) {
         1 | 2 => y = -1,
@@ -156,7 +156,7 @@ fn choose_string(t: &Tree) -> &str {
     match t.state {
         TreeState::Trunk => {
             let d = trunk_growth(t);
-            if (d.1 == 0) {
+            if d.1 == 0 {
                 return TRUNK_STRINGS[0];
             };
             match d.0 {
@@ -167,7 +167,7 @@ fn choose_string(t: &Tree) -> &str {
         }
         TreeState::BranchLeft => {
             let d = left_shoot_growth(t);
-            if (d.1 > 0) {
+            if d.1 > 0 {
                 return SHOOT_STRINGS[0];
             } else if d.1 == 0 {
                 return SHOOT_STRINGS[1];
@@ -180,7 +180,7 @@ fn choose_string(t: &Tree) -> &str {
         }
         TreeState::BranchRight => {
             let d = right_shoot_growth(t);
-            if (d.1 > 0) {
+            if d.1 > 0 {
                 return SHOOT_STRINGS[4];
             } else if d.1 == 0 {
                 return SHOOT_STRINGS[5];
