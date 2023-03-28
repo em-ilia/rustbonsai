@@ -3,13 +3,13 @@ use rand::{thread_rng, Rng};
 
 // Growth Constants
 const EDGE_PENALTY: (i16, i16, i16, i16) = (-2, 3, 4, -4); // How soon to fear the edge
-const KNOT_RATIO: u32 = 30; // Decrease for more knots
-const KNOT_AGE: i16 = 20; // Minimum age to knot
+const KNOT_RATIO: u32 = 20; // Decrease for more knots
+const KNOT_AGE: i16 = 15; // Minimum age to knot
 const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
 const TRANSITION_AGE: i16 = 20; // Minimum age to branch
 const TRANSITION_PENALTY: i16 = 10; // How much age to add when branching
 const LEAF_AGE: i16 = 50; // When we should start generating leaves
-const DEATH_AGE: i16 = 80; // When to die :(
+const DEATH_AGE: i16 = 90; // When to die :(
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
