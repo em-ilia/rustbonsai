@@ -179,9 +179,10 @@ fn right_shoot_growth(_t: &Tree) -> (i16, i16) {
 }
 
 fn leaf_growth(_t: &Tree) -> (i16, i16) {
-    let y: i16 = match thread_rng().gen_range(1..=10) {
+    let y: i16 = match thread_rng().gen_range(1..=15) {
+        // Leaves should not be vertical!!
         1 => -1,
-        10 => 1,
+        2 => 1,
         _ => 0
     };
     let x: i16 = thread_rng().gen_range(-1..=1);
