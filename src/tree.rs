@@ -4,12 +4,12 @@ use rand::{thread_rng, Rng};
 // Growth Constants
 const EDGE_PENALTY: (i16, i16, i16, i16) = (-2, 3, 4, -4); // How soon to fear the edge
 const KNOT_RATIO: u32 = 20; // Decrease for more knots
-const KNOT_AGE: i16 = 15; // Minimum age to knot
+const KNOT_AGE: i16 = 20; // Minimum age to knot
 const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
-const TRANSITION_AGE: i16 = 20; // Minimum age to branch
-const TRANSITION_PENALTY: i16 = 10; // How much age to add when branching
+const TRANSITION_AGE: i16 = 40; // Minimum age to branch
+const TRANSITION_PENALTY: i16 = 20; // How much age to add when branching
 const LEAF_AGE: i16 = 50; // When we should start generating leaves
-const DEATH_AGE: i16 = 70; // When to die :(
+const DEATH_AGE: i16 = 90; // When to die :(
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
@@ -64,6 +64,10 @@ impl Tree {
     }
 
     pub fn grow(&mut self) {
+        // Grow all children
+        for tree in &mut self.knots {
+            tree.grow()
+        }
         self.age += 1;
 
         // Handle old and dead trees
@@ -119,10 +123,6 @@ impl Tree {
             self.force_knot();
         }
 
-        // Grow all children
-        for tree in &mut self.knots {
-            tree.grow()
-        }
     }
 
     pub fn observe(&self) -> Vec<(i16, i16, StyledContent<&str>)> {
@@ -168,19 +168,19 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
     // New trunk:
     match t.age {
         // New trunks
-        0..=6 => return (thread_rng().gen_range(-1..=1), 0),
-        7..=TRANSITION_AGE => {
+        0..=10 => return (thread_rng().gen_range(-1..=1), 0),
+        11..=TRANSITION_AGE => {
             let x = match thread_rng().gen_range(1..=10) {
                 1 | 2 => -1,
                 3 | 4 => 1,
                 _ => 0,
             };
-            let y = if t.age % 2 == 0 { 1 } else { 0 };
+            let y = if t.age % 4 == 0 { 1 } else { 0 };
             return (x, y);
         }
         _ => {
             let x = thread_rng().gen_range(-1..=2);
-            let y = if thread_rng().gen_ratio(1, 5) { 1 } else { 0 };
+            let y = if thread_rng().gen_ratio(1, 3) { 1 } else { 0 };
             return (x, y);
         }
     }

@@ -57,7 +57,6 @@ impl Screen {
 fn ui_loop() -> Result<()> {
     let scr = Screen::new();
     let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16);
-    t.force_knot();
 
     let mut override_counter: u16 = 0;
     while !t.is_dead() {
@@ -66,7 +65,7 @@ fn ui_loop() -> Result<()> {
         t.grow();
         for (x, y, s) in t.observe() {
             scr.draw_str(x as i16, y as i16, s);
-            if crossterm::event::poll(Duration::from_millis(20))? { // Allow user termination
+            if crossterm::event::poll(Duration::from_millis(10))? { // Allow user termination
                 if let Event::Key(key) = event::read()? {
                     if let KeyCode::Char('q') = key.code {
                         return Ok(());
