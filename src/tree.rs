@@ -15,6 +15,7 @@ const DEATH_AGE: i16 = LEAF_AGE + 15; // When to die :(
 pub struct Tree {
     x: i16,
     y: i16,
+    dxy: (i16, i16),
     age: i16,
     pub state: TreeState,
     knots: Vec<Tree>,
@@ -34,6 +35,7 @@ impl Tree {
         Tree {
             x: 0,
             y: 4,
+            dxy: (0, 0),
             age: 0,
             state: TreeState::Trunk,
             knots: Vec::new(),
@@ -45,6 +47,7 @@ impl Tree {
         Tree {
             x: self.x,
             y: self.y,
+            dxy: self.dxy,
             age: self.age,
             state, // Should have RNG here instead
             knots: Vec::new(),
@@ -80,15 +83,15 @@ impl Tree {
             self.state = TreeState::Leaves;
         }
 
-        let d = match self.state {
+        self.dxy = match self.state {
             TreeState::Trunk => trunk_growth(self),
             TreeState::BranchLeft => left_shoot_growth(self),
             TreeState::BranchRight => right_shoot_growth(self),
             TreeState::Dead => (0, 0),
             TreeState::Leaves => leaf_growth(self), // Not sure what to do here
         };
-        self.x += d.0;
-        self.y += d.1;
+        self.x += self.dxy.0;
+        self.y += self.dxy.1;
 
         // Correct out of bounds
         let bnd = self.check_boundary();
@@ -223,45 +226,57 @@ fn leaf_growth(_t: &Tree) -> (i16, i16) {
 const TRUNK_STRINGS: [&str; 4] = ["/~", "\\|", "/|\\", "|/"];
 const SHOOT_STRINGS: [&str; 6] = ["\\", "\\_", "\\|", "/|", "/", "_/"];
 fn choose_string(t: &Tree) -> StyledContent<&str> {
+    let s: StyledContent<&str>;
     match t.state {
         TreeState::Trunk => {
-            let d = trunk_growth(t);
-            if d.1 == 0 {
-                return TRUNK_STRINGS[0].dark_yellow();
-            };
-            match d.0 {
-                n if n < 0 => return TRUNK_STRINGS[1].dark_yellow(),
-                0 => return TRUNK_STRINGS[2].dark_yellow(),
-                _ => return TRUNK_STRINGS[3].dark_yellow(),
+            if t.dxy.1 == 0 {
+                s = TRUNK_STRINGS[0].dark_yellow();
+            } else {
+            match t.dxy.0 {
+                n if n < 0 => s = TRUNK_STRINGS[1].dark_yellow(),
+                0 => s = TRUNK_STRINGS[2].dark_yellow(),
+                _ => s = TRUNK_STRINGS[3].dark_yellow(),
+            }
             }
         }
         TreeState::BranchLeft => {
-            let d = left_shoot_growth(t);
-            if d.1 > 0 {
-                return SHOOT_STRINGS[0].dark_yellow();
-            } else if d.1 == 0 {
-                return SHOOT_STRINGS[1].dark_yellow();
+            if t.dxy.1 > 0 {
+                SHOOT_STRINGS[0].dark_yellow();
+            } else if t.dxy.1 == 0 {
+                SHOOT_STRINGS[1].dark_yellow();
             };
-            match d.0 {
-                n if n < 0 => return SHOOT_STRINGS[2].dark_yellow(),
-                0 => SHOOT_STRINGS[3].dark_yellow(),
-                _ => SHOOT_STRINGS[4].dark_yellow(),
+            match t.dxy.0 {
+                n if n < 0 => s = SHOOT_STRINGS[2].dark_yellow(),
+                0 => s = SHOOT_STRINGS[3].dark_yellow(),
+                _ => s = SHOOT_STRINGS[4].dark_yellow(),
             }
         }
         TreeState::BranchRight => {
-            let d = right_shoot_growth(t);
-            if d.1 > 0 {
-                return SHOOT_STRINGS[4].dark_yellow();
-            } else if d.1 == 0 {
-                return SHOOT_STRINGS[5].dark_yellow();
+            if t.dxy.1 > 0 {
+                SHOOT_STRINGS[4].dark_yellow();
+            } else if t.dxy.1 == 0 {
+                SHOOT_STRINGS[5].dark_yellow();
             };
-            match d.0 {
-                n if n < 0 => return SHOOT_STRINGS[2].dark_yellow(),
-                0 => SHOOT_STRINGS[3].dark_yellow(),
-                _ => SHOOT_STRINGS[4].dark_yellow(),
+            match t.dxy.0 {
+                n if n < 0 => s = SHOOT_STRINGS[2].dark_yellow(),
+                0 => s = SHOOT_STRINGS[3].dark_yellow(),
+                _ => s = SHOOT_STRINGS[4].dark_yellow(),
             }
         }
-        TreeState::Leaves => "&&".green(),
-        _ => return "&".yellow(),
+        TreeState::Leaves => s = "&&".green(),
+        _ => s = "&".yellow(),
+    };
+
+    match t.state {
+        TreeState::Trunk | TreeState::BranchLeft | TreeState::BranchRight =>
+            if thread_rng().gen_ratio(1,3) {s.bold()} else {s},
+        TreeState::Leaves =>
+            match thread_rng().gen_range(1..=10) {
+                1 | 2 => s.bold(),
+                3 => s.bold().dark_green(),
+                4 | 5 => s.dark_green(),
+                _ => s
+            }
+        _ => if thread_rng().gen_ratio(1, 5) {s.bold()} else {s}
     }
 }
