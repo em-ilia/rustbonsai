@@ -57,7 +57,7 @@ impl Tree {
     fn check_boundary(&self) -> (i16, i16, i16, i16) {
         return (
             self.y - self.ymax,
-            self.y,
+            self.y - 4,
             self.x + self.xmax,
             self.x - self.xmax,
         );
