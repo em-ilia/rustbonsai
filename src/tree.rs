@@ -2,8 +2,8 @@ use crossterm::style::{StyledContent, Stylize};
 use rand::{thread_rng, Rng};
 
 // Growth Constants
-const EDGE_PENALTY: (i16, i16, i16, i16) = (-2, 3, 4, -4); // How soon to fear the edge
-const KNOT_RATIO: u32 = 20; // Decrease for more knots
+const EDGE_PENALTY: (i16, i16, i16, i16) = (-2, 3, 4, -4); // How strongly to fear the edge
+const KNOT_RATIO: u32 = 22; // Decrease for more knots
 const KNOT_AGE: i16 = 20; // Minimum age to knot
 const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
 const TRANSITION_AGE: i16 = 40; // Minimum age to branch
