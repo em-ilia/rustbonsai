@@ -8,8 +8,8 @@ const KNOT_AGE: i16 = 20; // Minimum age to knot
 const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
 const TRANSITION_AGE: i16 = 40; // Minimum age to branch
 const TRANSITION_PENALTY: i16 = 20; // How much age to add when branching
-const LEAF_AGE: i16 = 50; // When we should start generating leaves
-const DEATH_AGE: i16 = 90; // When to die :(
+const LEAF_AGE: i16 = 60; // When we should start generating leaves
+const DEATH_AGE: i16 = LEAF_AGE + 15; // When to die :(
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
@@ -33,7 +33,7 @@ impl Tree {
     pub fn new(xmax: i16, ymax: i16) -> Self {
         Tree {
             x: 0,
-            y: 0,
+            y: 4,
             age: 0,
             state: TreeState::Trunk,
             knots: Vec::new(),
@@ -175,7 +175,7 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
                 3 | 4 => 1,
                 _ => 0,
             };
-            let y = if t.age % 4 == 0 { 1 } else { 0 };
+            let y = if t.age % 6 == 0 { 1 } else { 0 };
             return (x, y);
         }
         _ => {
@@ -186,7 +186,6 @@ fn trunk_growth(t: &Tree) -> (i16, i16) {
     }
 }
 
-/// Same as trunk_growth
 fn left_shoot_growth(_t: &Tree) -> (i16, i16) {
     let x: i16;
     let mut y: i16 = 0;
@@ -204,22 +203,10 @@ fn left_shoot_growth(_t: &Tree) -> (i16, i16) {
     return (x, y);
 }
 
-/// Same as trunk_growth
-fn right_shoot_growth(_t: &Tree) -> (i16, i16) {
-    let x: i16;
-    let mut y: i16 = 0;
-    match thread_rng().gen_range(1..=10) {
-        1 => y = -1,
-        9 | 10 => y = 1,
-        _ => (),
-    }
-    match thread_rng().gen_range(1..=10) {
-        1 | 2 => x = 2,
-        3..=6 => x = 1,
-        7..=9 => x = 0,
-        _ => x = -1,
-    }
-    return (x, y);
+/// Same as left_shoot_growth
+fn right_shoot_growth(t: &Tree) -> (i16, i16) {
+    let xy = left_shoot_growth(t);
+    return (-xy.0, xy.1)
 }
 
 fn leaf_growth(_t: &Tree) -> (i16, i16) {

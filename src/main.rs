@@ -3,7 +3,7 @@ use crossterm::{
     cursor::{Hide, MoveTo, Show},
     event::{self, Event, KeyCode},
     execute, queue,
-    style::{Print, StyledContent},
+    style::{Print, StyledContent, Stylize},
     terminal::{
         disable_raw_mode, enable_raw_mode, size, EnterAlternateScreen, LeaveAlternateScreen,
     },
@@ -11,7 +11,7 @@ use crossterm::{
 };
 use std::{
     io::{stdout, Write},
-    thread,
+    thread::{self, sleep},
     time::Duration,
 };
 
@@ -57,6 +57,8 @@ impl Screen {
 fn ui_loop() -> Result<()> {
     let scr = Screen::new();
     let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16);
+    print_pot(&scr)?;
+    stdout().flush()?;
 
     let mut override_counter: u16 = 0;
     while !t.is_dead() {
@@ -76,6 +78,25 @@ fn ui_loop() -> Result<()> {
         }
     }
     thread::sleep(Duration::from_secs(2));
+
+    Ok(())
+}
+
+fn print_pot(scr: &Screen) -> Result<()> {
+    const TRUNK2: &str = "./~~~\\.";
+    const GRASS2: &str = "~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+    const LAYER2: &str = " \\                           / ";
+    const LAYER1: &str = "  \\_________________________/ ";
+    const LAYER0: &str = "  (_)                     (_)";
+    let x = -(LAYER0.len() as i16)/2;
+
+    scr.draw_str(x, 1, LAYER0.white());
+    scr.draw_str(x, 2, LAYER1.white());
+    scr.draw_str(x, 3, LAYER2.white());
+    scr.draw_str(x+2, 3, GRASS2.green());
+    scr.draw_str(x+12, 3, TRUNK2.yellow());
+
+    scr.draw_str(0, (scr.y_max as i16) -10, "shrimp".red());
 
     Ok(())
 }
