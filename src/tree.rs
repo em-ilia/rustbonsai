@@ -114,9 +114,10 @@ impl Tree {
             && thread_rng().gen_ratio(1, TRANSITION_RATIO)
         {
             self.age += TRANSITION_PENALTY;
-            self.state = if thread_rng().gen_bool(0.8) { // Tree seems to deviate right,
-                                                         // so branching left more often
-                                                         // adds nice balance
+            self.state = if thread_rng().gen_bool(0.8) {
+                // Tree seems to deviate right,
+                // so branching left more often
+                // adds nice balance
                 TreeState::BranchLeft
             } else {
                 TreeState::BranchRight
@@ -127,7 +128,6 @@ impl Tree {
         if thread_rng().gen_ratio(1, KNOT_RATIO) && self.age > KNOT_AGE {
             self.force_knot();
         }
-
     }
 
     pub fn observe(&self) -> Vec<(i16, i16, StyledContent<&str>)> {
@@ -157,9 +157,11 @@ impl Tree {
         match self.state {
             TreeState::BranchLeft => self.knots.push(self.new_at(TreeState::Trunk)),
             TreeState::BranchRight => self.knots.push(self.new_at(TreeState::Trunk)),
-            TreeState::Trunk => self.knots.push(self.new_at(
-                    if thread_rng().gen_bool(0.5) {TreeState::BranchRight}
-                    else {TreeState::BranchLeft})),
+            TreeState::Trunk => self.knots.push(self.new_at(if thread_rng().gen_bool(0.5) {
+                TreeState::BranchRight
+            } else {
+                TreeState::BranchLeft
+            })),
             _ => (),
         }
     }
@@ -211,7 +213,7 @@ fn left_shoot_growth(_t: &Tree) -> (i16, i16) {
 /// Same as left_shoot_growth
 fn right_shoot_growth(t: &Tree) -> (i16, i16) {
     let xy = left_shoot_growth(t);
-    return (-xy.0, xy.1)
+    return (-xy.0, xy.1);
 }
 
 fn leaf_growth(_t: &Tree) -> (i16, i16) {
@@ -234,11 +236,11 @@ fn choose_string(t: &Tree) -> StyledContent<&str> {
             if t.dxy.1 == 0 {
                 s = TRUNK_STRINGS[0].dark_yellow();
             } else {
-            match t.dxy.0 {
-                n if n < 0 => s = TRUNK_STRINGS[1].dark_yellow(),
-                0 => s = TRUNK_STRINGS[2].dark_yellow(),
-                _ => s = TRUNK_STRINGS[3].dark_yellow(),
-            }
+                match t.dxy.0 {
+                    n if n < 0 => s = TRUNK_STRINGS[1].dark_yellow(),
+                    0 => s = TRUNK_STRINGS[2].dark_yellow(),
+                    _ => s = TRUNK_STRINGS[3].dark_yellow(),
+                }
             }
         }
         TreeState::BranchLeft => {
@@ -270,15 +272,25 @@ fn choose_string(t: &Tree) -> StyledContent<&str> {
     };
 
     match t.state {
-        TreeState::Trunk | TreeState::BranchLeft | TreeState::BranchRight =>
-            if thread_rng().gen_ratio(1,3) {s.bold()} else {s},
-        TreeState::Leaves =>
-            match thread_rng().gen_range(1..=10) {
-                1 | 2 => s.bold(),
-                3 => s.bold().dark_green(),
-                4 | 5 => s.dark_green(),
-                _ => s
+        TreeState::Trunk | TreeState::BranchLeft | TreeState::BranchRight => {
+            if thread_rng().gen_ratio(1, 3) {
+                s.bold()
+            } else {
+                s
             }
-        _ => if thread_rng().gen_ratio(1, 5) {s.bold()} else {s}
+        }
+        TreeState::Leaves => match thread_rng().gen_range(1..=10) {
+            1 | 2 => s.bold(),
+            3 => s.bold().dark_green(),
+            4 | 5 => s.dark_green(),
+            _ => s,
+        },
+        _ => {
+            if thread_rng().gen_ratio(1, 5) {
+                s.bold()
+            } else {
+                s
+            }
+        }
     }
 }
