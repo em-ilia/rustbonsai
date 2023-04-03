@@ -114,7 +114,9 @@ impl Tree {
             && thread_rng().gen_ratio(1, TRANSITION_RATIO)
         {
             self.age += TRANSITION_PENALTY;
-            self.state = if thread_rng().gen_bool(0.5) {
+            self.state = if thread_rng().gen_bool(0.8) { // Tree seems to deviate right,
+                                                         // so branching left more often
+                                                         // adds nice balance
                 TreeState::BranchLeft
             } else {
                 TreeState::BranchRight
