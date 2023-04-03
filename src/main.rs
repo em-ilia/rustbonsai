@@ -60,12 +60,15 @@ impl Screen {
 
 fn ui_loop() -> Result<()> {
     let scr = Screen::new();
-    let mut options = (false,);
+    // First is the debug flag, second is the 'goodbye' flag
+    let mut options = (false, false);
     stdout().flush()?;
 
     tree_loop(&scr, &mut options)?;
+    if options.1 { return Ok(()) }
 
     loop {
+        if options.1 { return Ok(()) };
         if crossterm::event::poll(Duration::from_millis(50))? {
             // Wait for close
             if let Event::Key(key) = event::read()? {
@@ -83,7 +86,7 @@ fn ui_loop() -> Result<()> {
     }
 }
 
-fn tree_loop(scr: &Screen, options: &mut (bool,)) -> Result<()> {
+fn tree_loop(scr: &Screen, options: &mut (bool, bool)) -> Result<()> {
     // Always reset pot and debug
     print_pot(&scr)?;
     scr.draw_str(0, (scr.y_max as i16) - 9, "    ".reset());
@@ -101,7 +104,10 @@ fn tree_loop(scr: &Screen, options: &mut (bool,)) -> Result<()> {
                 // Allow user termination
                 if let Event::Key(key) = event::read()? {
                     match key.code {
-                        KeyCode::Char('q') => return Ok(()),
+                        KeyCode::Char('q') => {
+                            options.1 = true;
+                            return Ok(())
+                        },
                         KeyCode::Char('d') => options.0 ^= true,
                         _ => (),
                     }
