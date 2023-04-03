@@ -61,9 +61,8 @@ fn ui_loop() -> Result<()> {
     stdout().flush()?;
 
     let mut override_counter: u16 = 0;
-    while !t.is_dead() {
+    while override_counter < 150 && !t.is_dead() {
         override_counter += 1;
-        if override_counter > 150 {return Ok(())}; // Ensure the loop is never infinite
         t.grow();
         for (x, y, s) in t.observe() {
             scr.draw_str(x as i16, y as i16, s);
@@ -76,10 +75,20 @@ fn ui_loop() -> Result<()> {
             }
             stdout().flush()?;
         }
-    }
-    thread::sleep(Duration::from_secs(2));
+        scr.draw_str(0, (scr.y_max as i16)-9, (override_counter.to_string().as_str()).red());
+        scr.draw_str(0, (scr.y_max as i16)-8, (t.age.to_string().as_str()).red());
 
-    Ok(())
+    }
+    loop {
+        if crossterm::event::poll(Duration::from_millis(50))? { // Wait for close
+            if let Event::Key(key) = event::read()? {
+                if let KeyCode::Char('q') = key.code {
+                    return Ok(());
+                }
+            }
+        }
+    }
+
 }
 
 fn print_pot(scr: &Screen) -> Result<()> {

@@ -6,17 +6,17 @@ const EDGE_PENALTY: (i16, i16, i16, i16) = (-2, 3, 4, -4); // How strongly to fe
 const KNOT_RATIO: u32 = 22; // Decrease for more knots
 const KNOT_AGE: i16 = 20; // Minimum age to knot
 const TRANSITION_RATIO: u32 = 20; // Decrease for earlier sideways branching
-const TRANSITION_AGE: i16 = 40; // Minimum age to branch
+const TRANSITION_AGE: i16 = 30; // Minimum age to branch
 const TRANSITION_PENALTY: i16 = 20; // How much age to add when branching
 const LEAF_AGE: i16 = 60; // When we should start generating leaves
-const DEATH_AGE: i16 = LEAF_AGE + 15; // When to die :(
+const DEATH_AGE: i16 = LEAF_AGE + 30; // When to die :(
 
 // const INITIAL_LIFE: i16 = 32;
 pub struct Tree {
     x: i16,
     y: i16,
     dxy: (i16, i16),
-    age: i16,
+    pub age: i16,
     pub state: TreeState,
     knots: Vec<Tree>,
     xmax: i16,
@@ -263,7 +263,7 @@ fn choose_string(t: &Tree) -> StyledContent<&str> {
                 _ => s = SHOOT_STRINGS[4].dark_yellow(),
             }
         }
-        TreeState::Leaves => s = "&&".green(),
+        TreeState::Leaves => s = "&&&".green(),
         _ => s = "&".yellow(),
     };
 
