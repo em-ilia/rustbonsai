@@ -5,7 +5,7 @@ use crossterm::{
     execute, queue,
     style::{Print, StyledContent, Stylize},
     terminal::{
-        disable_raw_mode, enable_raw_mode, size, EnterAlternateScreen, LeaveAlternateScreen, Clear,
+        disable_raw_mode, enable_raw_mode, size, Clear, EnterAlternateScreen, LeaveAlternateScreen,
     },
     Result,
 };
@@ -25,7 +25,8 @@ fn main() -> Result<()> {
 
     // Clean up
     disable_raw_mode()?;
-    execute!(stdout(), LeaveAlternateScreen, Show)?;
+    execute!(stdout(), Show)?;
+    execute!(stdout(), LeaveAlternateScreen)?;
 
     Ok(())
 }
@@ -49,13 +50,17 @@ impl Screen {
             return ();
         };
 
-        queue!(stdout(), MoveTo(x_adj as u16, y_adj as u16), Print(s));
+        if let Ok(()) = queue!(stdout(), MoveTo(x_adj as u16, y_adj as u16), Print(s)) {
+            return ();
+        } else {
+            return (); // We could handle this error, but there's really no need!
+        }
     }
 }
 
 fn ui_loop() -> Result<()> {
     let scr = Screen::new();
-    let mut options = (false, );
+    let mut options = (false,);
     stdout().flush()?;
 
     tree_loop(&scr, &mut options)?;
@@ -68,7 +73,9 @@ fn ui_loop() -> Result<()> {
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char('d') => options.0 ^= true,
                     KeyCode::Char('n') => tree_loop(&scr, &mut options)?,
-                    KeyCode::Char('c') => execute!(stdout(), Clear(crossterm::terminal::ClearType::All))?,
+                    KeyCode::Char('c') => {
+                        execute!(stdout(), Clear(crossterm::terminal::ClearType::All))?
+                    }
                     _ => (),
                 }
             }
@@ -76,15 +83,11 @@ fn ui_loop() -> Result<()> {
     }
 }
 
-fn tree_loop(scr: &Screen, options: &mut (bool, ) ) -> Result<()> {
+fn tree_loop(scr: &Screen, options: &mut (bool,)) -> Result<()> {
     // Always reset pot and debug
     print_pot(&scr)?;
-    scr.draw_str(0,
-                (scr.y_max as i16) - 9,
-                "    ".reset());
-    scr.draw_str(0,
-                (scr.y_max as i16) - 8,
-                "    ".reset());
+    scr.draw_str(0, (scr.y_max as i16) - 9, "    ".reset());
+    scr.draw_str(0, (scr.y_max as i16) - 8, "    ".reset());
 
     let mut t = tree::Tree::new(scr.x_max as i16, scr.y_max as i16);
     let mut override_counter: u16 = 0;
